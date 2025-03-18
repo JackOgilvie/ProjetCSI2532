@@ -1,0 +1,104 @@
+/* Couleurs */
+:root {
+   --clr-pink: #ed8b88;
+   --clr-teal: #90E4C1;
+   --clr-dark_teal: #39d493;
+   --clr-blue: #46c5d3;
+   --clr-yellow: #ffd379;
+
+
+   --ff-title: 'Merienda';
+   --ff-content: 'Courier New', monospace;
+}
+
+
+/* Style général */
+body {
+    font-family: var(--ff-content);
+    background-color: white;
+    background-image: url('../images/beach_bg1.jpg');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Conteneur principal */
+.container {
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+
+/* Boutons */
+button {
+    background-color: var(--clr-yellow);
+    font-family: var(--ff-content);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: var(--clr-blue);
+    transform: scale(1.05);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Formulaires */
+input {
+    font-family: var(--ff-content);
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Titres */
+h1, h2 {
+    font-family: var(--ff-title);
+    color: var(--clr-pink);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Liens */
+a {
+    text-decoration: none;
+    color: var(--clr-teal);
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+a:hover {
+    color: var(--clr-dark_teal);
+    text-decoration: underline;
+}
