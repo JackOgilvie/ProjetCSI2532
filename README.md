@@ -21,6 +21,11 @@ Cloner le dépôt depuis ce répo GitHub.
 - Ouvrez **pgAdmin** ou **psql**
 - **Exécutez les scripts SQL** pour créer les tables et insérer des données pour les fichiers `database/schema.sql` et `database/data.sql`.
 
+```sh
+psql -U postgres -f database/schema.sql
+psql -U postgres -f database/data.sql
+```
+
 **3. Configuration de la Connexion à la Base de Données**
 
 Aller voir le fichier `config_example.php` et suivre les instructions présentes.

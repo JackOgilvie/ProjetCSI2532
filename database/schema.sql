@@ -5,9 +5,6 @@ DROP DATABASE IF EXISTS eHotels;
 CREATE DATABASE eHotels;
 \c eHotels;
 
--- Activer l'extension nécessaire pour gérer les intervalles de dates
-CREATE EXTENSION IF NOT EXISTS btree_gist;
-
 -- Drop tables s'ils existent déjà pour éviter des conflits
 DROP TABLE IF EXISTS associe CASCADE;
 DROP TABLE IF EXISTS gere CASCADE;
@@ -58,7 +55,8 @@ CREATE TABLE chambre (
 CREATE TABLE client (
     NAS BIGINT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
-    prénom VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     adresse TEXT NOT NULL,
     date_enregistrement DATE NOT NULL
 );
@@ -80,15 +78,15 @@ CREATE TABLE employe (
     employe_ID SERIAL PRIMARY KEY,
     NAS BIGINT NOT NULL UNIQUE,
     nom VARCHAR(255) NOT NULL,
-    prénom VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
     adresse TEXT NOT NULL,
-    rôle VARCHAR(100) NOT NULL CHECK (rôle IN ('Gestionnaire', 'Réceptionniste', 'Ménage', 'Sécurité')),
+    position VARCHAR(100) NOT NULL CHECK (position IN ('Gestionnaire', 'Réceptionniste', 'Ménage', 'Sécurité')),
     hotel_ID INT NOT NULL,
     FOREIGN KEY (hotel_ID) REFERENCES hotel(hotel_ID) ON DELETE CASCADE
 );
 
 -- Assurer qu'il y a un seul Manager par hôtel
-CREATE UNIQUE INDEX unique_manager_per_hotel ON employe (hotel_ID) WHERE rôle = 'Gestionnaire';
+CREATE UNIQUE INDEX unique_manager_per_hotel ON employe (hotel_ID) WHERE position = 'Gestionnaire';
 
 -- Création de la table `gere` (Relation Employé - Réservation)
 CREATE TABLE gere (
@@ -105,6 +103,5 @@ CREATE TABLE associe (
     reservation_ID INT,
     PRIMARY KEY (chambre_ID, reservation_ID),
     FOREIGN KEY (chambre_ID) REFERENCES chambre(chambre_ID) ON DELETE CASCADE,
-    FOREIGN KEY (reservation_ID) REFERENCES reservation(reservation_ID) ON DELETE CASCADE,
-    EXCLUDE USING gist (chambre_ID WITH =, daterange(date_debut, date_fin, '[]') WITH &&)
+    FOREIGN KEY (reservation_ID) REFERENCES reservation(reservation_ID) ON DELETE CASCADE
 );
