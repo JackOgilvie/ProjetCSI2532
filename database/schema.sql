@@ -5,6 +5,9 @@ DROP DATABASE IF EXISTS eHotels;
 CREATE DATABASE eHotels;
 \c eHotels;
 
+-- Activer l'extension nécessaire pour les comparaisons de dates
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 -- Drop tables s'ils existent déjà pour éviter des conflits
 DROP TABLE IF EXISTS associe CASCADE;
 DROP TABLE IF EXISTS gere CASCADE;
@@ -105,3 +108,78 @@ CREATE TABLE associe (
     FOREIGN KEY (chambre_ID) REFERENCES chambre(chambre_ID) ON DELETE CASCADE,
     FOREIGN KEY (reservation_ID) REFERENCES reservation(reservation_ID) ON DELETE CASCADE
 );
+
+
+
+
+-- Ajout des Triggers pour la base de données
+
+
+-- Empêcher la double réservation d'une même chambre sur les mêmes dates
+CREATE OR REPLACE FUNCTION check_reservation_conflict()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM reservation r
+        JOIN associe a ON r.reservation_ID = a.reservation_ID
+        WHERE a.chambre_ID = NEW.chambre_ID
+        AND r.etat IN ('Confirmé', 'Enregistré')
+        AND daterange(r.date_debut, r.date_fin, '[]') && daterange(NEW.date_debut, NEW.date_fin, '[]')
+    ) THEN
+        RAISE EXCEPTION 'Cette chambre est déjà réservée pour ces dates.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER prevent_double_booking
+BEFORE INSERT ON associe
+FOR EACH ROW
+EXECUTE FUNCTION check_reservation_conflict();
+
+
+-- Empêcher de faire un paiement qui n'est pas le bon montant
+CREATE OR REPLACE FUNCTION verify_payment_before_confirmation()
+RETURNS TRIGGER AS $$
+DECLARE
+    prix_total DECIMAL(10,2);
+BEGIN
+    -- Récupérer le prix total des chambres associées à la réservation
+    SELECT SUM(c.prix) INTO prix_total
+    FROM chambre c
+    JOIN associe a ON c.chambre_ID = a.chambre_ID
+    WHERE a.reservation_ID = NEW.reservation_ID;
+
+    -- Vérifier si le paiement est suffisant
+    IF NEW.paiement < prix_total THEN
+        RAISE EXCEPTION 'Le paiement est insuffisant pour confirmer la réservation.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_payment
+BEFORE UPDATE ON reservation
+FOR EACH ROW
+WHEN (NEW.etat = 'Confirmé')
+EXECUTE FUNCTION verify_payment_before_confirmation();
+
+
+
+
+
+
+-- Index pour améliorer la performance des requêtes SQL
+
+-- Accélère la recherche des réservations par date
+CREATE INDEX idx_reservation_date ON reservation (date_debut, date_fin);
+
+-- Optimise la recherche des chambres par hôtel et capacité
+CREATE INDEX idx_chambre_hotel_capacity ON chambre (hotel_ID, capacite);
+
+-- Améliore la recherche des employés par position
+CREATE INDEX idx_employe_position ON employe (position);
+
+-- Accélère l'affichage des réservations pour un client donné
+CREATE INDEX idx_reservation_client ON reservation (client_NAS, date_debut);
