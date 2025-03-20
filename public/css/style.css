@@ -12,30 +12,31 @@
     --ff-content: 'Courier New', monospace;
  }
  
- /* ============================= 
-  Styles Généraux
- ============================= */
- body {
-     font-family: var(--ff-content);
-     background-color: white;
-     background-image: url('../images/hotel_bg2.jpg');
-     background-size: cover;
-     background-position: center;
-     text-align: center;
-     margin: 0;
-     padding: 0;
-     animation: fadeIn 1s ease-in-out;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: 100vh;
- }
- 
- /* Animation d'apparition */
+/* ============================= 
+   Styles Globaux 
+============================= */
+
  @keyframes fadeIn {
-     from { opacity: 0; }
-     to { opacity: 1; }
- }
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+body {
+    font-family: var(--ff-content);
+    background-color: white;
+    background-image: url('../images/hotel_bg2.jpg');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    animation: fadeIn 1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
  
  /* ============================= 
   Conteneur Principal
@@ -163,3 +164,128 @@ input {
      text-decoration: underline;
  }
  
+
+/* ============================= 
+   Barre de navigation 
+============================= */
+.navbar {
+    width: 100%;
+    height: 60px;
+    background: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar-left h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-right span {
+    margin-right: 50px;
+    font-size: 1.2rem;
+}
+
+.logout-button {
+    background: #ff4d4d;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+    margin-right: 50px; /* Éloigne du texte à droite au lieu de pousser complètement */
+}
+
+
+.logout-button:hover {
+    background: #cc0000;
+}
+
+/* ============================= 
+   Dashboard (Tableau de bord) 
+============================= */
+.dashboard-container {
+    text-align: center;
+    padding-top: 100px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    min-height: calc(100vh - 60px);
+}
+
+.dashboard-container h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.dashboard-options {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+/* ============================= 
+   Cartes d'options (Boutons) 
+============================= */
+.dashboard-card {
+    width: 350px;
+    height: 250px;
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    color: black;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-card img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.dashboard-card h3 {
+    font-size: 1.4rem;
+}
+
+/* ============================= 
+   Responsive Design 
+============================= */
+@media (max-width: 768px) {
+    .dashboard-options {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .dashboard-card {
+        width: 90%;
+    }
+}
