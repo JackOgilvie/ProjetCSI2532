@@ -10,8 +10,8 @@
 <body>
     <div class="container">
         <img src="images/logo.png" alt="eHotels Logo" width="150">
-        <h1>Bienvenue sur eHotels</h1>
-        <p>Réservez votre paradis tropical dès maintenant !</p>
+        <h1>Bienvenue sur eHôtels</h1>
+        <p>Réservez votre séjour parfait, où que vous soyez!</p>
         <a href="login.php"><button>Se connecter</button></a>
         <a href="register.php"><button>S'inscrire</button></a>
     </div>

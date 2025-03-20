@@ -60,6 +60,7 @@ CREATE TABLE client (
     nom VARCHAR(255) NOT NULL,
     prenom VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    mot_de_passe TEXT NOT NULL,
     adresse TEXT NOT NULL,
     date_enregistrement DATE NOT NULL
 );
@@ -83,6 +84,8 @@ CREATE TABLE employe (
     nom VARCHAR(255) NOT NULL,
     prenom VARCHAR(255) NOT NULL,
     adresse TEXT NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    mot_de_passe TEXT NOT NULL,
     position VARCHAR(100) NOT NULL CHECK (position IN ('Gestionnaire', 'Réceptionniste', 'Ménage', 'Sécurité')),
     hotel_ID INT NOT NULL,
     FOREIGN KEY (hotel_ID) REFERENCES hotel(hotel_ID) ON DELETE CASCADE
