@@ -15,21 +15,21 @@ $user_email = $_SESSION['email'];
 // SQL query to fetch reservations
 if ($user_type === 'client') {
     // Clients can only see their own reservations
-    $sql = "SELECT r.reservation_ID, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
+    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
             FROM reservation r
-            JOIN associe a ON r.reservation_ID = a.reservation_ID
-            JOIN chambre c ON a.chambre_ID = c.chambre_ID
-            JOIN hotel h ON c.hotel_ID = h.hotel_ID
-            JOIN client cl ON r.client_NAS = cl.NAS
+            JOIN associe a ON r.reservation_id = a.reservation_id
+            JOIN chambre c ON a.chambre_id = c.chambre_id
+            JOIN hotel h ON c.hotel_id = h.hotel_id
+            JOIN client cl ON r.client_nas = cl.nas
             WHERE cl.email = $1";
     $params = array($user_email);
 } else {
     // Employees can see all reservations
-    $sql = "SELECT r.reservation_ID, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
+    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
             FROM reservation r
-            JOIN associe a ON r.reservation_ID = a.reservation_ID
-            JOIN chambre c ON a.chambre_ID = c.chambre_ID
-            JOIN hotel h ON c.hotel_ID = h.hotel_ID";
+            JOIN associe a ON r.reservation_id = a.reservation_id
+            JOIN chambre c ON a.chambre_id = c.chambre_id
+            JOIN hotel h ON c.hotel_id = h.hotel_id";
     $params = array();
 }
 
@@ -57,13 +57,13 @@ $result = pg_query_params($conn, $sql, $params);
                         <th>Date de Début</th>
                         <th>Date de Fin</th>
                         <th>État</th>
-                        <th>Paiement (€)</th>
+                        <th>Paiement ($)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = pg_fetch_assoc($result)): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['reservation_ID']); ?></td>
+                            <td><?php echo htmlspecialchars($row['reservation_id']); ?></td>
                             <td><?php echo htmlspecialchars($row['hotel_nom']); ?></td>
                             <td><?php echo htmlspecialchars($row['date_debut']); ?></td>
                             <td><?php echo htmlspecialchars($row['date_fin']); ?></td>

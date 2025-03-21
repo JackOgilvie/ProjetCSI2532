@@ -2,74 +2,49 @@
 session_start();
 include '../config/config.php';
 
-// Rediriger si l'utilisateur n'est pas connecté
+// Vérification de la session
 if (!isset($_SESSION['email']) || $_SESSION['type'] !== 'client') {
     header("Location: login.php");
     exit();
 }
 
-$email = $_SESSION['email'];
-
-// Récupérer les informations du client
+// Récupérer le nas du client
 $sql_client = "SELECT nas FROM client WHERE email = $1";
 $result_client = pg_query_params($conn, $sql_client, array($_SESSION['email']));
 
 if ($result_client && pg_num_rows($result_client) > 0) {
     $client = pg_fetch_assoc($result_client);
-    
-    // Debug output
-    echo "<pre>";
-    print_r($client);
-    echo "</pre>";
-
-    if (isset($client['nas'])) {
-        $client_NAS = $client['nas'];
-        echo "NAS récupéré: " . htmlspecialchars($client_NAS); // Debugging output
-    } else {
-        die("❌ Erreur: Clé 'nas' non trouvée dans la réponse SQL.");
-    }
+    $client_nas = $client['nas'];
 } else {
-    die("❌ Erreur: Aucun client trouvé avec cet email.");
+    die("❌ Erreur: Client non trouvé.");
 }
 
-
-
-
-
-
-// Récupérer la liste des hôtels
-$sql_hotels = "SELECT hotel_ID, nom FROM hotel";
-$result_hotels = pg_query($conn, $sql_hotels);
-
-// Gestion du formulaire
+// Gestion du formulaire de réservation
 $error = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $hotel_ID = $_POST['hotel_ID'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chambre_ID = $_POST['chambre_ID'];
     $date_debut = $_POST['date_debut'];
     $date_fin = $_POST['date_fin'];
 
-    // Vérifier que les dates sont valides
     if ($date_debut >= $date_fin) {
         $error = "❌ La date de fin doit être après la date de début.";
     } else {
-        // Insérer la réservation
-        $sql_insert = "INSERT INTO reservation (date_debut, date_fin, etat, paiement, client_NAS) 
+        $sql_insert = "INSERT INTO reservation (date_debut, date_fin, etat, paiement, client_nas) 
                        VALUES ($1, $2, 'En attente', 0, $3) RETURNING reservation_ID";
-        $params = array($date_debut, $date_fin, $client_NAS);
+        $params = array($date_debut, $date_fin, $client_nas);
         $result_insert = pg_query_params($conn, $sql_insert, $params);
 
         if ($row = pg_fetch_assoc($result_insert)) {
             $reservation_ID = $row['reservation_ID'];
 
-            // Associer la réservation à la chambre choisie
+            // Associer la chambre
             $sql_associe = "INSERT INTO associe (chambre_ID, reservation_ID) VALUES ($1, $2)";
             pg_query_params($conn, $sql_associe, array($chambre_ID, $reservation_ID));
 
             header("Location: view_reservations.php");
             exit();
         } else {
-            $error = "❌ Erreur lors de la réservation.";
+            $error = "❌ Erreur lors de la création de la réservation.";
         }
     }
 }
@@ -79,97 +54,246 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouvelle Réservation - eHôtels</title>
     <link rel="stylesheet" href="css/style.css">
-    
+    <style>
+        .selected-room {
+            background-color: #ffd379;
+            color: black;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+    </style>
     <script>
-        function filterRooms() {
-            let hotel = document.getElementById("hotel").value;
-            let prix = document.getElementById("prix").value;
-            let capacite = document.getElementById("capacite").value;
-            let vue = document.getElementById("vue").value;
-            let problemes = document.getElementById("problemes").value;
-            let extensible = document.getElementById("extensible").checked ? 1 : 0;
+        function getCapaciteLabel(cap) {
+            switch (parseInt(cap)) {
+                case 1: return "Simple";
+                case 2: return "Double";
+                case 3: return "Triple";
+                case 4: return "Studio";
+                case 5: return "Suite";
+                default: return cap;
+            }
+        }
+        function applyFilter() {
+            const date_debut = document.getElementById('date_debut').value;
+            const date_fin = document.getElementById('date_fin').value;
+            const capacite = document.getElementById('capacite').value;
+            const chaine = document.getElementById('chaine').value;
+            const categorie = document.getElementById('categorie').value;
+            const prix = document.getElementById('prix').value;
+            const vue = document.getElementById('vue').value;
+            const extensible = document.getElementById('extensible').value;
 
-            fetch("get_rooms.php?hotel=" + hotel + "&prix=" + prix + "&capacite=" + capacite + "&vue=" + vue + "&problemes=" + problemes + "&extensible=" + extensible)
-                .then(response => response.text())
+            if (!date_debut || !date_fin || date_debut >= date_fin) {
+                alert("❌ Veuillez entrer une plage de dates valide.");
+                return;
+            }
+
+            const url = `get_rooms.php?date_debut=${date_debut}&date_fin=${date_fin}&capacite=${capacite}&chaine=${chaine}&categorie=${categorie}&prix=${prix}&vue=${vue}&extensible=${extensible}`;
+
+            fetch(url)
+                .then(res => res.json())
                 .then(data => {
-                    document.getElementById("room-list").innerHTML = data;
-                });
+                    const tbody = document.getElementById('chambre-body');
+                    tbody.innerHTML = "";
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5'>Aucune chambre trouvée</td></tr>";
+                        return;
+                    }
+
+                    data.forEach(chambre => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="wrap-text">${chambre.nom_hotel}</td>
+                            <td class="star-column">${chambre.categorie_hotel} ★</td>
+                            <td>${chambre.commodites}</td>
+                            <td>${chambre.prix} $</td>
+                            <td>${getCapaciteLabel(chambre.capacite)}</td>
+                            <td>${chambre.vue}</td>
+                            <td>${chambre.extensible === 't' ? 'Oui' : 'Non'}</td>
+                            <td>
+                                <button type="button" onclick="selectRoom(${chambre.chambre_id}, this)">Réserver</button>
+                                <button type="button" onclick="showInfo(${chambre.chambre_id})">Info</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("❌ Erreur fetch:", error));
+        }
+
+
+        function selectRoom(chambre_ID, btn) {
+            document.getElementById('selectedRoom').value = chambre_ID;
+            const buttons = document.querySelectorAll("table button");
+            buttons.forEach(b => b.classList.remove("selected-room"));
+            btn.classList.add("selected-room");
+        }
+
+        function showInfo(chambre_id) {
+            fetch(`get_room_details.php?chambre_id=${chambre_id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("❌ " + data.error);
+                        return;
+                    }
+
+                    const modalContent = `
+                        <h3>🛏️ Chambre ${chambre_id}</h3>
+                        <p><strong>Commodités :</strong> ${data.commodites}</p>
+                        <p><strong>Prix :</strong> ${data.prix} $</p>
+                        <p><strong>Capacité :</strong> ${getCapaciteLabel(data.capacite)}</p>
+                        <p><strong>Vue :</strong> ${data.vue}</p>
+                        <p><strong>Extensible :</strong> ${data.extensible == 't' ? 'Oui' : 'Non'}</p>
+                        <p><strong>Dommages :</strong> ${data.problemes ? data.problemes : 'Aucun'}</p>
+                        <hr>
+                        <h4>🏨 <Hôtel</h4>
+                        <p><strong>Nom :</strong> ${data.hotel_nom}</p>
+                        <p><strong>Adresse :</strong> ${data.hotel_adresse}</p>
+                        <p><strong>Catégorie :</strong> ${data.hotel_categorie} ★</p>
+                    `;
+
+                    document.getElementById("modal-body").innerHTML = modalContent;
+                    document.getElementById("infoModal").style.display = "block";
+                })
+                .catch(error => console.error("❌ Erreur lors de la récupération des infos:", error));
+        }
+
+        function closeModal() {
+            document.getElementById("infoModal").style.display = "none";
         }
     </script>
 </head>
 <body>
-    <div class="container">
-        <h2>Faire une Nouvelle Réservation</h2>
+    <div class="container-register">
+        <h3>Faire une Nouvelle Réservation</h3>
 
-        <!-- FILTER SECTION -->
-        <div class="filter-section">
-            <div id="room-list">
-            <p>Sélectionnez un hôtel et ajustez les filtres pour voir les chambres disponibles.</p>
-        </div>
+        <?php if ($error): ?>
+            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-            <label for="hotel">Hôtel :</label>
-            <select id="hotel" onchange="filterRooms()">
-                <option value="">Tous</option>
-                <?php
-                $sql_hotels = "SELECT hotel_ID, nom FROM hotel";
-                $result_hotels = pg_query($conn, $sql_hotels);
-                while ($hotel = pg_fetch_assoc($result_hotels)) {
-                    echo "<option value='" . $hotel['hotel_ID'] . "'>" . htmlspecialchars($hotel['nom']) . "</option>";
-                }
-                ?>
-            </select>
+        <!-- Filtres -->
+        <form onsubmit="applyFilter(); return false;">
+            <div class="filter-container">
+                <!-- Ligne 1 -->
+                <div class="filter-row">
+                <div class="filter-group">
+                    <label for="date_debut">Date début :</label>
+                    <input type="date" id="date_debut">
+                </div>
+                <div class="filter-group">
+                    <label for="date_fin">Date fin :</label>
+                    <input type="date" id="date_fin">
+                </div>
+                <div class="filter-group">
+                    <label for="chaine">Chaîne :</label>
+                    <select id="chaine">
+                    <option value="">Toutes</option>
+                    <?php
+                    $result = pg_query($conn, "SELECT chaine_id, nom FROM chaine");
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<option value='{$row['chaine_id']}'>" . htmlspecialchars($row['nom']) . "</option>";
+                    }
+                    ?>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="categorie">Catégorie :</label>
+                    <select id="categorie">
+                        <option value="">Toutes</option>
+                        <option value="1">1 ★</option>
+                        <option value="2">2 ★★</option>
+                        <option value="3">3 ★★★</option>
+                        <option value="4">4 ★★★★</option>
+                        <option value="5">5 ★★★★★</option>
+                    </select>
+                </div>
+                </div>
 
-            <div style="display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%;">
-
-    <!-- Prix Max -->
-    <div style="display: flex; align-items: center; flex: 1;">
-        <label for="prix" style="margin-right: 4px;">Prix Max :</label>
-        <span style="font-weight: bold;">$</span>
-        <input type="number" id="prix" placeholder="Prix max" oninput="filterRooms()" style="width: 100px; margin-left: 5px;">
-    </div>
-
-    <!-- Capacité -->
-    <div style="display: flex; align-items: center; flex: 1;">
-        <label for="capacite" style="margin-right: 5px;">Capacité :</label>
-        <input type="number" id="capacite" placeholder="Capacité min" oninput="filterRooms()" style="width: 100px;">
-    </div>
-
-    <!-- Extensible -->
-    <div style="display: flex; align-items: center; flex: 1;">
-        <label for="extensible" style="margin-right: 1px;">Extensible :</label>
-        <input type="checkbox" id="extensible" onclick="filterRooms()">
-    </div>
-
-</div>
-
-
-<!-- Vue Selection (should remain below) -->
-<label for="vue">Vue :</label>
-<select id="vue" onchange="filterRooms()">
-    <option value="">Toutes</option>
-    <option value="Mer">Mer</option>
-    <option value="Jardin">Jardin</option>
-    <option value="Ville">Ville</option>
-</select>
-
-        
-        
-        <!-- FORM FOR BOOKING -->
-        <form method="POST" action="">
-            <input type="hidden" name="chambre_ID" id="selectedRoom" required>
-            <label for="date_debut">Date de Début :</label>
-            <input type="date" name="date_debut" required>
-
-            <label for="date_fin">Date de Fin :</label>
-            <input type="date" name="date_fin" required>
-
-            <button type="submit">Réserver</button>
+                <!-- Ligne 2 -->
+                <div class="filter-row">
+                <div class="filter-group">
+                    <label for="prix">Prix Max :</label>
+                    <input type="number" id="prix" style="width: 100px;">
+                </div>
+                <div class="filter-group">
+                    <label for="capacite">Capacité :</label>
+                    <select id="capacite">
+                    <option value="">Tous</option>
+                    <option value="1">Simple</option>
+                    <option value="2">Double</option>
+                    <option value="3">Triple</option>
+                    <option value="4">Studio</option>
+                    <option value="5">Suite</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="vue">Vue :</label>
+                    <select id="vue">
+                    <option value="">Toutes</option>
+                    <option value="Vue sur mer">Mer</option>
+                    <option value="Vue sur lac">Lac</option>
+                    <option value="Vue sur jardin">Jardin</option>
+                    <option value="Vue sur ville">Ville</option>
+                    <option value="Vue sur montagne">Montagne</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="extensible">Extensible :</label>
+                    <select id="extensible">
+                        <option value="">--</option>
+                        <option value="1">Oui</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button type="submit">Appliquer</button>
+                </div>
+                </div>
+            </div>
         </form>
 
-        <a href="client_dashboard.php">Retour au tableau de bord</a>
+        <!-- Tableau -->
+        <div class="scroll-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hôtel</th>
+                        <th class="star-column">Catégorie</th>
+                        <th>Commodités</th>
+                        <th>Prix</th>
+                        <th>Capacité</th>
+                        <th>Vue</th>
+                        <th>Extensible</th>
+                        <th>Réserver</th>
+                    </tr>
+                </thead>
+                <tbody id="chambre-body">
+                    <!-- Rempli dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+
+
+        <a href="client_dashboard.php">← Retour au tableau de bord</a>
     </div>
+
+    <div id="infoModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; background:white; border:1px solid #ccc; padding:20px; box-shadow:0 0 15px rgba(0,0,0,0.5); z-index:1000;">
+        <button style="float:right;" onclick="closeModal()">✖</button>
+        <div id="modal-body"></div>
+    </div>
+
 </body>
 </html>

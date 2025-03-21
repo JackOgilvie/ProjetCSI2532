@@ -404,6 +404,38 @@ a:hover {
     text-decoration: underline;
 }
 
+.scroll-table {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+.scroll-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.scroll-table th, .scroll-table td {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+td.wrap-text {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 150px;
+}
+
+td.star-column, th.star-column {
+    max-width: 60px;
+    width: 60px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+
 /* ============================= 
    Reservation Form Styles 
 ============================= */
@@ -422,24 +454,61 @@ select, input[type="date"] {
     background: white;
 }
 
+.container-register {
+    width: 80%;
+    margin-top: 100px;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.55);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    border-radius: 20px;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+  
+.filter-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+  
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 200px;
+}
+
+.filter-group label {
+    white-space: nowrap;
+    font-weight: bold;
+}
+  
 
 /* ========== VIDEO BACKGROUND ========== */
 #bg-video {
-    position: fixed; /* Fixes the video to the background */
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Covers full width */
-    height: 100vh; /* Covers full height */
-    object-fit: cover; /* Ensures the video fills the screen */
-    z-index: -1; /* Pushes video behind all content */
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; 
+    z-index: -1; 
 }
 
-/* OPTIONAL: Dark Overlay for Better Readability */
 .container {
     position: relative;
-    z-index: 1; /* Keeps text/buttons above the video */
+    z-index: 1; 
     text-align: center;
-    background: rgba(255, 255, 255, 0.3); /* Slight transparency */
+    background: rgba(255, 255, 255, 0.3);
     padding: 20px;
     border-radius: 10px;
 }

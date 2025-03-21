@@ -11,7 +11,7 @@ if (!isset($_SESSION['email']) || $_SESSION['type'] !== 'client') {
 $email = $_SESSION['email'];
 
 // Récupérer les informations du client
-$sql_client = "SELECT NAS, nom, prenom, email, adresse FROM client WHERE email = $1";
+$sql_client = "SELECT nas, nom, prenom, email, adresse FROM client WHERE email = $1";
 $result_client = pg_query_params($conn, $sql_client, array($email));
 $client = pg_fetch_assoc($result_client);
 ?>
@@ -55,7 +55,5 @@ $client = pg_fetch_assoc($result_client);
             </div>
         </div>
     </div>
-
-
 </body>
 </html>

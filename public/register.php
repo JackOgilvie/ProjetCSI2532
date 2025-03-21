@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         if (!empty($nas) && !empty($nom) && !empty($prenom) && !empty($email) && !empty($adresse)) {
-            $sql = "INSERT INTO client (NAS, nom, prenom, email, adresse, mot_de_passe, date_enregistrement) 
+            $sql = "INSERT INTO client (nas, nom, prenom, email, adresse, mot_de_passe, date_enregistrement) 
                     VALUES ($1, $2, $3, $4, $5, $6, $7)";
             $params = array($nas, $nom, $prenom, $email, $adresse, $hashed_password, $date_enregistrement);
             
