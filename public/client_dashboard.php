@@ -40,19 +40,22 @@ $client = pg_fetch_assoc($result_client);
 
     <!-- Contenu principal -->
     <div class="dashboard-container">
-        <h2>Menu de eHôtels</h2>
+        <div class="dashboard-content-box">
+            <h3>Prêt à vivre une nouvelle aventure ?<br>
+            Consultez vos réservations ou réservez votre prochain séjour dès maintenant!</h3>
 
-        <div class="dashboard-options">
-        <a href="view_reservations.php" class="dashboard-card">
-            <h3>Voir mes réservations</h3>
-        </a>
+            <div class="dashboard-options">
+                <a href="view_reservations.php" class="dashboard-card">
+                    <h3>Voir mes réservations</h3>
+                </a>
 
-        <a href="new_reservation.php" class="dashboard-card">
-            <h3>Faire une nouvelle réservation</h3>
-        </a>
-
+                <a href="new_reservation.php" class="dashboard-card">
+                    <h3>Faire une nouvelle réservation</h3>
+                </a>
+            </div>
         </div>
     </div>
+
 
 </body>
 </html>
