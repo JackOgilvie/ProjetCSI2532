@@ -8,8 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- VIDEO BACKGROUND -->
+<video autoplay muted loop id="bg-video">
+        <source src="videos/BEHVID.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
     <div class="container">
-        <img src="images/logo.png" alt="eHotels Logo" width="150">
+        <img src="images/log.png" alt="eHotels Logo" width="150">
         <h1>Bienvenue sur eHôtels</h1>
         <p>Réservez votre séjour parfait, où que vous soyez!</p>
         <a href="login.php"><button>Se connecter</button></a>
