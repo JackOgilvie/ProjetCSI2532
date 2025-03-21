@@ -24,7 +24,7 @@ if ($result_client && pg_num_rows($result_client) > 0) {
 
     if (isset($client['nas'])) {
         $client_NAS = $client['nas'];
-        echo "✅ NAS récupéré: " . htmlspecialchars($client_NAS); // Debugging output
+        echo "NAS récupéré: " . htmlspecialchars($client_NAS); // Debugging output
     } else {
         die("❌ Erreur: Clé 'nas' non trouvée dans la réponse SQL.");
     }
@@ -82,17 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouvelle Réservation - eHôtels</title>
     <link rel="stylesheet" href="css/style.css">
+    
     <script>
-        function loadRooms(hotelID) {
-            if (hotelID === "") {
-                document.getElementById("roomSelect").innerHTML = "<option value=''>Sélectionnez un hôtel d'abord</option>";
-                return;
-            }
-            
-            fetch("get_rooms.php?hotel_ID=" + hotelID)
+        function filterRooms() {
+            let hotel = document.getElementById("hotel").value;
+            let prix = document.getElementById("prix").value;
+            let capacite = document.getElementById("capacite").value;
+            let vue = document.getElementById("vue").value;
+            let problemes = document.getElementById("problemes").value;
+            let extensible = document.getElementById("extensible").checked ? 1 : 0;
+
+            fetch("get_rooms.php?hotel=" + hotel + "&prix=" + prix + "&capacite=" + capacite + "&vue=" + vue + "&problemes=" + problemes + "&extensible=" + extensible)
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById("roomSelect").innerHTML = data;
+                    document.getElementById("room-list").innerHTML = data;
                 });
         }
     </script>
@@ -100,22 +103,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h2>Faire une Nouvelle Réservation</h2>
-        <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
 
+        <!-- FILTER SECTION -->
+        <div class="filter-section">
+            <div id="room-list">
+            <p>Sélectionnez un hôtel et ajustez les filtres pour voir les chambres disponibles.</p>
+        </div>
+
+            <label for="hotel">Hôtel :</label>
+            <select id="hotel" onchange="filterRooms()">
+                <option value="">Tous</option>
+                <?php
+                $sql_hotels = "SELECT hotel_ID, nom FROM hotel";
+                $result_hotels = pg_query($conn, $sql_hotels);
+                while ($hotel = pg_fetch_assoc($result_hotels)) {
+                    echo "<option value='" . $hotel['hotel_ID'] . "'>" . htmlspecialchars($hotel['nom']) . "</option>";
+                }
+                ?>
+            </select>
+
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%;">
+
+    <!-- Prix Max -->
+    <div style="display: flex; align-items: center; flex: 1;">
+        <label for="prix" style="margin-right: 4px;">Prix Max :</label>
+        <span style="font-weight: bold;">$</span>
+        <input type="number" id="prix" placeholder="Prix max" oninput="filterRooms()" style="width: 100px; margin-left: 5px;">
+    </div>
+
+    <!-- Capacité -->
+    <div style="display: flex; align-items: center; flex: 1;">
+        <label for="capacite" style="margin-right: 5px;">Capacité :</label>
+        <input type="number" id="capacite" placeholder="Capacité min" oninput="filterRooms()" style="width: 100px;">
+    </div>
+
+    <!-- Extensible -->
+    <div style="display: flex; align-items: center; flex: 1;">
+        <label for="extensible" style="margin-right: 1px;">Extensible :</label>
+        <input type="checkbox" id="extensible" onclick="filterRooms()">
+    </div>
+
+</div>
+
+
+<!-- Vue Selection (should remain below) -->
+<label for="vue">Vue :</label>
+<select id="vue" onchange="filterRooms()">
+    <option value="">Toutes</option>
+    <option value="Mer">Mer</option>
+    <option value="Jardin">Jardin</option>
+    <option value="Ville">Ville</option>
+</select>
+
+        
+        
+        <!-- FORM FOR BOOKING -->
         <form method="POST" action="">
-            <label for="hotel">Choisir un Hôtel :</label>
-            <select name="hotel_ID" id="hotel" onchange="loadRooms(this.value)" required>
-                <option value="">Sélectionnez un hôtel</option>
-                <?php while ($hotel = pg_fetch_assoc($result_hotels)): ?>
-                    <option value="<?= $hotel['hotel_ID'] ?>"><?= htmlspecialchars($hotel['nom']) ?></option>
-                <?php endwhile; ?>
-            </select>
-
-            <label for="roomSelect">Choisir une Chambre :</label>
-            <select name="chambre_ID" id="roomSelect" required>
-                <option value="">Sélectionnez un hôtel d'abord</option>
-            </select>
-
+            <input type="hidden" name="chambre_ID" id="selectedRoom" required>
             <label for="date_debut">Date de Début :</label>
             <input type="date" name="date_debut" required>
 

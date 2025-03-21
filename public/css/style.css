@@ -31,7 +31,7 @@
 }
 
 body {
-    font-family: var(--ff-content);
+    font-family: var(--ff-luxury);
     background-color: white;
     background-image: url('../images/hotel_bg2.jpg');
     background-size: cover;
@@ -52,6 +52,7 @@ body {
  ============================= */
  .container {
      width: 80%;
+     margin-top: 300px;
      max-width: 650px;
      background: rgba(255, 255, 255, 0.55);
      padding: 25px;
@@ -59,6 +60,10 @@ body {
      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
      backdrop-filter: blur(5px);
  }
+
+ .filters-container {
+    margin-top: 100px; /* Moves only filters lower */
+}
 
 /* Organisation en 2 colonnes */
 .row {
@@ -88,7 +93,7 @@ input {
  ============================= */
  button {
      background-color: var(--clr-yellow);
-     font-family: var(--ff-content);
+     font-family: var(--ff-luxury);
      color: white;
      border: none;
      padding: 12px 18px;
@@ -122,7 +127,7 @@ input {
  }
  
  input {
-     font-family: var(--ff-content);
+     font-family: var(--ff-luxury);
      width: 100%;
      padding: 10px;
      margin: 8px 0;
@@ -142,7 +147,7 @@ input {
   Titres & Texte
  ============================= */
  h1, h2 {
-     font-family: var(--ff-title);
+     font-family: var(--ff-luxury);
      color: black;
      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
      font-size: 2.5rem;
@@ -181,7 +186,7 @@ input {
 .navbar {
     width: 100%;
     height: 60px;
-    background: #333;
+    background: transparent;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -211,12 +216,13 @@ input {
 .logout-button {
     background: #ff4d4d;
     color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
     transition: background 0.3s ease-in-out;
-    margin-right: 50px; /* Éloigne du texte à droite au lieu de pousser complètement */
+    height: 20px;
+    margin-right: 60px; /* Éloigne du texte à droite au lieu de pousser complètement */
 }
 
 
@@ -269,7 +275,20 @@ input {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    /* Add this to set background image */
+    background-size: cover;
+    background-position: center;
 }
+
+.dashboard-card:first-child {
+    background-image: url('../images/resort_desk.png'); 
+}
+
+.dashboard-card:nth-child(2) {
+    background-image: url('../images/resort_room.png'); 
+}
+
 
 .dashboard-card:hover {
     transform: scale(1.05);
@@ -283,8 +302,13 @@ input {
 }
 
 .dashboard-card h3 {
-    font-size: 1.4rem;
+    font-family: 'Poppins', sans-serif; /* Change to your preferred font */
+    font-size: 1.5rem;  
+    font-weight: bold;   
+    color: white;        
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional shadow for better contrast */
 }
+
 
 /* ============================= 
    Responsive Design 
@@ -360,3 +384,5 @@ select, input[type="date"] {
     font-size: 16px;
     background: white;
 }
+
+
