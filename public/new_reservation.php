@@ -281,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </tr>
                 </thead>
                 <tbody id="chambre-body">
-                    <!-- Rempli dynamiquement -->
+                    <tr><td colspan="8">Veuillez appliquer un filtre pour afficher les chambres disponibles.</td></tr>
                 </tbody>
             </table>
         </div>

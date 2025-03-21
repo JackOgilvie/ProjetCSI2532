@@ -368,13 +368,11 @@ input {
    Table Styles 
 ============================= */
 table {
-    width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    border-spacing: 0;
 }
 
 th, td {
-    border: 1px solid #ddd;
     padding: 12px;
     text-align: center;
 }
@@ -407,7 +405,6 @@ a:hover {
 .scroll-table {
     max-height: 400px;
     overflow-y: auto;
-    border: 1px solid #ccc;
     margin-top: 10px;
 }
 
