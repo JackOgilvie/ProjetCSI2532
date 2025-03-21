@@ -135,11 +135,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         function selectRoom(chambre_ID, btn) {
+            const date_debut = document.getElementById('date_debut').value;
+            const date_fin = document.getElementById('date_fin').value;
+
+            if (!date_debut || !date_fin || date_debut >= date_fin) {
+                alert("❌ Veuillez entrer une plage de dates valide.");
+                return;
+            }
+
             document.getElementById('selectedRoom').value = chambre_ID;
-            const buttons = document.querySelectorAll("table button");
-            buttons.forEach(b => b.classList.remove("selected-room"));
-            btn.classList.add("selected-room");
+            document.getElementById('selectedDateDebut').value = date_debut;
+            document.getElementById('selectedDateFin').value = date_fin;
+
+            document.getElementById('reservationForm').submit();
         }
+
 
         function showInfo(chambre_id) {
             fetch(`get_room_details.php?chambre_id=${chambre_id}`)
@@ -289,6 +299,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <a href="client_dashboard.php">← Retour au tableau de bord</a>
     </div>
+
+    <form id="reservationForm" method="POST" action="create_reservation.php">
+        <input type="hidden" name="chambre_ID" id="selectedRoom">
+        <input type="hidden" name="date_debut" id="selectedDateDebut">
+        <input type="hidden" name="date_fin" id="selectedDateFin">
+    </form>
+
 
     <div id="infoModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; background:white; border:1px solid #ccc; padding:20px; box-shadow:0 0 15px rgba(0,0,0,0.5); z-index:1000;">
         <button style="float:right;" onclick="closeModal()">✖</button>
