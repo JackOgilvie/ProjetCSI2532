@@ -74,9 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <div class="row">
-                <div class="form-group">
+                <div class="form-group full-width">
                     <input type="text" name="adresse" placeholder="Adresse" required>
-                </div>
+            </div>
+
             </div>
 
             <div class="row">

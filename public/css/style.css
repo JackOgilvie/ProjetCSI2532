@@ -7,6 +7,7 @@
     --clr-dark_teal: #39d493;
     --clr-blue: #46c5d3;
     --clr-yellow: #ffd379;
+    --clr-darkgreen: #098f17;
  
     --ff-title: 'Merienda';
     --ff-content: 'Courier New', monospace;
@@ -59,9 +60,10 @@ body {
     margin-bottom: 10px;
 }
 
-.form-group {
-    width: 50%;
+.form-group.full-width {
+    width: 100%;
 }
+
 
 /* Ajuster les champs d'entrée */
 input {
@@ -154,13 +156,13 @@ input {
  ============================= */
  a {
      text-decoration: none;
-     color: var(--clr-teal);
+     color: var(--clr-darkgreen);
      font-weight: bold;
      transition: color 0.3s ease-in-out;
  }
  
  a:hover {
-     color: var(--clr-dark_teal);
+     color: var(--clr-yellow);
      text-decoration: underline;
  }
  
@@ -220,7 +222,7 @@ input {
 .dashboard-container {
     text-align: center;
     padding-top: 100px;
-    background-color: white;
+    background-image: url('../images/clientdashback.jpg');
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -288,4 +290,65 @@ input {
     .dashboard-card {
         width: 90%;
     }
+}
+
+
+
+
+/* ============================= 
+   Table Styles 
+============================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: var(--clr-teal);
+    color: white;
+}
+
+td {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+tr:hover {
+    background-color: rgba(144, 228, 193, 0.3);
+}
+
+a {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: var(--clr-dark_teal);
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================= 
+   Reservation Form Styles 
+============================= */
+label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+select, input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background: white;
 }
