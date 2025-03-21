@@ -8,9 +8,17 @@
     --clr-blue: #46c5d3;
     --clr-yellow: #ffd379;
     --clr-darkgreen: #098f17;
+    --clr-darkblue: #2b23d4;
+    --clr-red: #ff000c;
+    --clr-lime: #d1ff00;
  
     --ff-title: 'Merienda';
     --ff-content: 'Courier New', monospace;
+    --ff-alt-title: 'Playfair Display', serif;  /* Elegant option */
+    --ff-modern: 'Poppins', sans-serif;  /* Clean & modern */
+    --ff-luxury: 'DM Serif Display', serif;  /* High-end feel */
+    --ff-friendly: 'Quicksand', sans-serif;  /* Soft & welcoming */
+    --ff-code: 'Courier Prime', monospace; /* Better monospace for code elements */
  }
  
 /* ============================= 
