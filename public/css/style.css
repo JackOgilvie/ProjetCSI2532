@@ -62,7 +62,7 @@ body {
  }
 
  .filters-container {
-    margin-top: 100px; /* Moves only filters lower */
+    margin-top: 100px;
 }
 
 /* Organisation en 2 colonnes */
@@ -184,17 +184,20 @@ input {
    Barre de navigation 
 ============================= */
 .navbar {
-    width: 100%;
-    height: 60px;
-    background: transparent;
-    color: white;
+    width: 90%;
+    max-width: 1200px;
+    margin: 15px auto 0 auto;
+    height: 70px;
+    background-color: whitesmoke;
+    color: black;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 30px;
     position: fixed;
+    border-radius: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
     top: 0;
-    left: 0;
     z-index: 1000;
 }
 
@@ -203,31 +206,51 @@ input {
     font-size: 1.8rem;
 }
 
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+}
+
+
 .navbar-right {
     display: flex;
     align-items: center;
+    gap: 30px;
 }
 
 .navbar-right span {
-    margin-right: 50px;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
 }
 
 .logout-button {
     background: #ff4d4d;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
     transition: background 0.3s ease-in-out;
-    height: 20px;
-    margin-right: 60px; /* Éloigne du texte à droite au lieu de pousser complètement */
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    height: 24px;
+    margin-bottom: 23px;
+    margin-top: 23px;
 }
 
-
 .logout-button:hover {
+    color: black;
     background: #cc0000;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* ============================= 
@@ -236,13 +259,14 @@ input {
 .dashboard-container {
     text-align: center;
     padding-top: 100px;
-    background-image: url('../images/clientdashback.jpg');
+    background-image: url('../images/beach_bg1.jpg');
+    background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 70px);
 }
 
 .dashboard-container h2 {
@@ -276,7 +300,6 @@ input {
     align-items: center;
     justify-content: center;
 
-    /* Add this to set background image */
     background-size: cover;
     background-position: center;
 }

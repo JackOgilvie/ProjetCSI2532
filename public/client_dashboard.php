@@ -29,6 +29,7 @@ $client = pg_fetch_assoc($result_client);
     <!-- Barre de navigation -->
     <nav class="navbar">
         <div class="navbar-left">
+            <img src="images/logo.png" alt="eHotels Logo" class="logo">
             <h2>eHôtels</h2>
         </div>
         <div class="navbar-right">
@@ -39,7 +40,7 @@ $client = pg_fetch_assoc($result_client);
 
     <!-- Contenu principal -->
     <div class="dashboard-container">
-        <h2>Menu de eHotels</h2>
+        <h2>Menu de eHôtels</h2>
 
         <div class="dashboard-options">
         <a href="view_reservations.php" class="dashboard-card">
