@@ -70,7 +70,7 @@ CREATE TABLE reservation (
     reservation_id SERIAL PRIMARY KEY,
     date_debut DATE NOT NULL,
     date_fin DATE NOT NULL,
-    etat VARCHAR(50) NOT NULL CHECK (etat IN ('En attente', 'Confirmé', 'Annulé', 'Enregistré')),
+    etat VARCHAR(50) NOT NULL CHECK (etat IN ('en_attente', 'confirme', 'annule', 'enregistre')),
     paiement DECIMAL(10,2) NOT NULL CHECK (paiement >= 0) DEFAULT 0,
     client_NAS BIGINT NOT NULL,
     FOREIGN KEY (client_nas) REFERENCES client(nas) ON DELETE SET NULL,
@@ -86,13 +86,13 @@ CREATE TABLE employe (
     adresse TEXT NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     mot_de_passe TEXT NOT NULL,
-    position VARCHAR(100) NOT NULL CHECK (position IN ('Gestionnaire', 'Réceptionniste', 'Ménage', 'Sécurité')),
+    position VARCHAR(100) NOT NULL CHECK (position IN ('gestionnaire', 'receptionniste', 'menage', 'securite')),
     hotel_id INT NOT NULL,
     FOREIGN KEY (hotel_id) REFERENCES hotel(hotel_id) ON DELETE CASCADE
 );
 
 -- Assurer qu'il y a un seul Manager par hôtel
-CREATE UNIQUE INDEX unique_manager_per_hotel ON employe (hotel_id) WHERE position = 'Gestionnaire';
+CREATE UNIQUE INDEX unique_manager_per_hotel ON employe (hotel_id) WHERE position = 'gestionnaire';
 
 -- Création de la table `gere` (Relation Employé - Réservation)
 CREATE TABLE gere (
@@ -121,20 +121,31 @@ CREATE TABLE associe (
 -- Empêcher la double réservation d'une même chambre sur les mêmes dates
 CREATE OR REPLACE FUNCTION check_reservation_conflict()
 RETURNS TRIGGER AS $$
+DECLARE
+    debut DATE;
+    fin DATE;
 BEGIN
+    -- On récupère les dates de la réservation liée
+    SELECT date_debut, date_fin INTO debut, fin
+    FROM reservation
+    WHERE reservation_id = NEW.reservation_id;
+
+    -- Vérification de conflit de dates pour la même chambre
     IF EXISTS (
-        SELECT 1 FROM reservation r
+        SELECT 1
+        FROM reservation r
         JOIN associe a ON r.reservation_id = a.reservation_id
         WHERE a.chambre_id = NEW.chambre_id
-        AND r.etat IN ('Confirmé', 'Enregistré')
-        AND daterange(r.date_debut, r.date_fin, '[]') && daterange(NEW.date_debut, NEW.date_fin, '[]')
+        AND r.etat IN ('confirme', 'enregistre')
+        AND daterange(r.date_debut, r.date_fin, '[]') && daterange(debut, fin, '[]')
     ) THEN
-        RAISE EXCEPTION 'Cette chambre est déjà réservée pour ces dates.';
+        RAISE EXCEPTION 'Cette chambre est deja reservee pour ces dates.';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+-- On réattache le trigger à la table associe
 CREATE TRIGGER prevent_double_booking
 BEFORE INSERT ON associe
 FOR EACH ROW
@@ -165,7 +176,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER check_payment
 BEFORE UPDATE ON reservation
 FOR EACH ROW
-WHEN (NEW.etat = 'Confirmé')
+WHEN (NEW.etat = 'confirme')
 EXECUTE FUNCTION verify_payment_before_confirmation();
 
 

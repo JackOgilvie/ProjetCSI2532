@@ -257,8 +257,8 @@ INSERT INTO chambre (prix, commodites, capacite, vue, problemes, extensible, hot
 
 -- Insertion des Gestionnaires
 INSERT INTO employe (NAS, nom, prenom, email, adresse, mot_de_passe, position, hotel_id) VALUES
-(101223456, 'Lavoie', 'Jean-Marc', 'jlavoie@ehotels.com', '123 Queen St, Toronto, Canada', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'Gestionnaire', 1),
-(102334567, 'Smith', 'Rebecca', 'rsmith@ehotels.com', '456 5th Avenue, New York, USA', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'Gestionnaire', 9),
-(103445678, 'Gonzalez', 'Luis', 'lgonzalez@ehotels.com', '789 Ocean Drive, Miami, USA', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'Gestionnaire', 17),
-(104556789, 'Williams', 'Sophie', 'swilliams@ehotels.com', '321 Mountain Rd, Vancouver, Canada', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'Gestionnaire', 25),
-(105667890, 'Dupont', 'Antoine', 'adupont@ehotels.com', '654 Paradise Beach, Nassau, Bahamas', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'Gestionnaire', 33);
+(101223456, 'Lavoie', 'Jean-Marc', 'jlavoie@ehotels.com', '123 Queen St, Toronto, Canada', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'gestionnaire', 1),
+(102334567, 'Smith', 'Rebecca', 'rsmith@ehotels.com', '456 5th Avenue, New York, USA', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'gestionnaire', 9),
+(103445678, 'Gonzalez', 'Luis', 'lgonzalez@ehotels.com', '789 Ocean Drive, Miami, USA', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'gestionnaire', 17),
+(104556789, 'Williams', 'Sophie', 'swilliams@ehotels.com', '321 Mountain Rd, Vancouver, Canada', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'gestionnaire', 25),
+(105667890, 'Dupont', 'Antoine', 'adupont@ehotels.com', '654 Paradise Beach, Nassau, Bahamas', '$2y$10$uTUt2a5mR/B3H9QeFdghOe6pkqBb/HvnK1XyHxtykvLgAorXb9Axm', 'gestionnaire', 33);

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "❌ La date de fin doit être après la date de début.";
     } else {
         $sql_insert = "INSERT INTO reservation (date_debut, date_fin, etat, paiement, client_nas) 
-                       VALUES ($1, $2, 'En attente', 0, $3) RETURNING reservation_ID";
+                       VALUES ($1, $2, 'en_attente', 0, $3) RETURNING reservation_ID";
         $params = array($date_debut, $date_fin, $client_nas);
         $result_insert = pg_query_params($conn, $sql_insert, $params);
 
@@ -190,9 +190,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container-register">
         <h3>Faire une Nouvelle Réservation</h3>
 
-        <?php if ($error): ?>
-            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <?php if (!empty($error)): ?>
+            <p style="color: red; font-weight: bold;"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
+
+        <?php
+            if (isset($_SESSION['reservation_error'])) {
+                echo "<p style='color:red'>" . $_SESSION['reservation_error'] . "</p>";
+                unset($_SESSION['reservation_error']);
+            }
+        ?>      
 
         <!-- Filtres -->
         <form onsubmit="applyFilter(); return false;">

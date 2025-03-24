@@ -17,17 +17,16 @@ if (isset($_GET['date_debut'], $_GET['date_fin'])) {
     $extensible = $_GET['extensible'] ?? null;
 
     $sql = "
-        SELECT c.chambre_id, c.commodites, c.prix, c.capacite, c.vue, c.extensible, h.nom AS nom_hotel, h.categorie AS categorie_hotel
-        FROM chambre c
-        JOIN hotel h ON c.hotel_id = h.hotel_id
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM reservation r
-            JOIN associe a ON r.reservation_id = a.reservation_id
-            WHERE a.chambre_id = c.chambre_id
-              AND r.etat IN ('Confirmé', 'Enregistré')
-              AND daterange(r.date_debut, r.date_fin, '[]') && daterange($1, $2, '[]')
-        )
+    SELECT c.*, h.nom AS nom_hotel, h.categorie AS categorie_hotel
+    FROM chambre c
+    JOIN hotel h ON c.hotel_id = h.hotel_id
+    WHERE NOT EXISTS (
+        SELECT 1 FROM associe a
+        JOIN reservation r ON a.reservation_id = r.reservation_id
+        WHERE a.chambre_id = c.chambre_id
+        AND r.etat IN ('confirme', 'enregistre')
+        AND daterange(r.date_debut, r.date_fin, '[]') && daterange($1::date, $2::date, '[]')
+    )
     ";
 
     $params = [$date_debut, $date_fin];

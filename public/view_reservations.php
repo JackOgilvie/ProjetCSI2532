@@ -1,83 +1,143 @@
 <?php
 session_start();
-include '../config/config.php'; // Database connection
+include '../config/config.php';
 
-// Redirect to login if not authenticated
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || $_SESSION['type'] !== 'client') {
     header("Location: login.php");
     exit();
 }
 
-// Check if the user is a client or employee
-$user_type = $_SESSION['type'];
-$user_email = $_SESSION['email'];
+$sql_client = "SELECT nas FROM client WHERE email = $1";
+$result_client = pg_query_params($conn, $sql_client, [$_SESSION['email']]);
 
-// SQL query to fetch reservations
-if ($user_type === 'client') {
-    // Clients can only see their own reservations
-    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
-            FROM reservation r
-            JOIN associe a ON r.reservation_id = a.reservation_id
-            JOIN chambre c ON a.chambre_id = c.chambre_id
-            JOIN hotel h ON c.hotel_id = h.hotel_id
-            JOIN client cl ON r.client_nas = cl.nas
-            WHERE cl.email = $1";
-    $params = array($user_email);
-} else {
-    // Employees can see all reservations
-    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
-            FROM reservation r
-            JOIN associe a ON r.reservation_id = a.reservation_id
-            JOIN chambre c ON a.chambre_id = c.chambre_id
-            JOIN hotel h ON c.hotel_id = h.hotel_id";
-    $params = array();
+if (!$result_client || pg_num_rows($result_client) === 0) {
+    die("❌ Client introuvable.");
 }
+$client = pg_fetch_assoc($result_client);
+$nas = $client['nas'];
 
-$result = pg_query_params($conn, $sql, $params);
+// Récupérer les réservations du client
+$sql = "
+    SELECT r.reservation_id, r.date_debut, r.date_fin, r.paiement, r.etat,
+           c.chambre_id, c.commodites, c.vue, c.capacite, c.extensible,
+           h.nom AS hotel_nom, h.adresse AS hotel_adresse, h.categorie AS hotel_categorie
+    FROM reservation r
+    JOIN associe a ON r.reservation_id = a.reservation_id
+    JOIN chambre c ON a.chambre_id = c.chambre_id
+    JOIN hotel h ON c.hotel_id = h.hotel_id
+    WHERE r.client_nas = $1
+    ORDER BY r.date_debut DESC
+";
+$result = pg_query_params($conn, $sql, [$nas]);
+$reservations = pg_fetch_all($result);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Réservations - eHôtels</title>
+    <title>Mes Réservations</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function getCapaciteLabel(cap) {
+            switch (parseInt(cap)) {
+                case 1: return "Simple";
+                case 2: return "Double";
+                case 3: return "Triple";
+                case 4: return "Studio";
+                case 5: return "Suite";
+                default: return cap;
+            }
+        }
+
+        function showInfo(data) {
+            const modalContent = `
+                <h3>🛏️ Chambre ${data.chambre_id}</h3>
+                <p><strong>Commodités :</strong> ${data.commodites}</p>
+                <p><strong>Vue :</strong> ${data.vue}</p>
+                <p><strong>Capacité :</strong> ${getCapaciteLabel(data.capacite)}</p>
+                <p><strong>Extensible :</strong> ${data.extensible === 't' ? 'Oui' : 'Non'}</p>
+                <hr>
+                <h4>🏨 Hôtel</h4>
+                <p><strong>Nom :</strong> ${data.hotel_nom}</p>
+                <p><strong>Adresse :</strong> ${data.hotel_adresse}</p>
+                <p><strong>Catégorie :</strong> ${data.hotel_categorie} ★</p>
+            `;
+            document.getElementById("modal-body").innerHTML = modalContent;
+            document.getElementById("infoModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("infoModal").style.display = "none";
+        }
+    </script>
 </head>
 <body>
-    <div class="container">
+    <div class="container-register">
         <h2>Mes Réservations</h2>
-
-        <?php if (pg_num_rows($result) > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID Réservation</th>
-                        <th>Hôtel</th>
-                        <th>Date de Début</th>
-                        <th>Date de Fin</th>
-                        <th>État</th>
-                        <th>Paiement ($)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = pg_fetch_assoc($result)): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Réservation</th>
+                    <th>Hôtel</th>
+                    <th>Date de Début</th>
+                    <th>Date de Fin</th>
+                    <th>État</th>
+                    <th>Paiement</th>
+                    <th>Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($reservations): ?>
+                    <?php foreach ($reservations as $r): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['reservation_id']); ?></td>
-                            <td><?php echo htmlspecialchars($row['hotel_nom']); ?></td>
-                            <td><?php echo htmlspecialchars($row['date_debut']); ?></td>
-                            <td><?php echo htmlspecialchars($row['date_fin']); ?></td>
-                            <td><?php echo htmlspecialchars($row['etat']); ?></td>
-                            <td><?php echo htmlspecialchars($row['paiement']); ?></td>
+                            <td><?= htmlspecialchars($r['reservation_id']) ?></td>
+                            <td><?= htmlspecialchars($r['hotel_nom']) ?></td>
+                            <td><?= htmlspecialchars($r['date_debut']) ?></td>
+                            <td><?= htmlspecialchars($r['date_fin']) ?></td>
+                            <td>
+                                <?php
+                                    // Afficher l’état en version lisible
+                                    $etat_lisible = match ($r['etat']) {
+                                        'en_attente' => 'En attente',
+                                        'confirme' => 'Confirmée',
+                                        'enregistre' => 'Enregistrée',
+                                        'annule' => 'Annulée',
+                                        default => ucfirst($r['etat']),
+                                    };
+                                    echo htmlspecialchars($etat_lisible);
+                                ?>
+                            </td>
+                            <td>
+                                <?= in_array($r['etat'], ['confirme', 'enregistre']) ? "✅ Oui" : "❌ Non" ?>
+                            </td>
+                            <td>
+                                <button onclick='showInfo(<?= json_encode($r) ?>)'>Info</button>
+                            </td>
                         </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>Aucune réservation trouvée.</p>
-        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="7">Aucune réservation trouvée.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <a href="client_dashboard.php">← Retour au tableau de bord</a>
+    </div>
 
-        <a href="client_dashboard.php">Retour au tableau de bord</a>
+    <div id="infoModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; background:white; border:1px solid #ccc; padding:20px; box-shadow:0 0 15px rgba(0,0,0,0.5); z-index:1000;">
+        <button style="float:right;" onclick="closeModal()">✖</button>
+        <div id="modal-body"></div>
     </div>
 </body>
 </html>
