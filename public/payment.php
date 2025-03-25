@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Option 1 : Carte de crédit</h3>
                 <input type="hidden" name="mode" value="carte">
                 <label for="carte">Numéro de carte :</label>
-                <input type="text" id="carte" name="carte" placeholder="1234 5678 9012 3456" pattern="\d{16}" required>
+                <input type="text" id="carte" name="carte" placeholder="1234 5678 9012 3456" pattern="\d{16}" maxlength="16" required>
                 <button type="submit">Payer maintenant</button>
             </div>
         </form>
