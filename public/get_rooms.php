@@ -24,7 +24,7 @@ if (isset($_GET['date_debut'], $_GET['date_fin'])) {
         SELECT 1 FROM associe a
         JOIN reservation r ON a.reservation_id = r.reservation_id
         WHERE a.chambre_id = c.chambre_id
-        AND r.etat IN ('confirme', 'enregistre')
+        AND r.etat IN ('confirme', 'enregistre', 'en_attente')
         AND daterange(r.date_debut, r.date_fin, '[]') && daterange($1::date, $2::date, '[]')
     )
     ";

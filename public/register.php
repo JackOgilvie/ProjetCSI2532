@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form method="POST" action="">
             <div class="row">
                 <div class="form-group">
-                    <input type="text" name="nas" placeholder="NAS" required>
+                    <input type="text" name="nas" placeholder="NAS (ex. 123456789)" maxlength="9" pattern="\d{9}" required>
                 </div>
                 <div class="form-group">
                     <input type="email" name="email" placeholder="Email" required>
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="row">
                 <div class="form-group full-width">
-                    <input type="text" name="adresse" placeholder="Adresse" required>
+                    <input type="text" name="adresse" placeholder="Adresse (ex. 123 Rue)" required>
             </div>
 
             </div>

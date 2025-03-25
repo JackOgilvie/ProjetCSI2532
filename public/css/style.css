@@ -88,96 +88,98 @@ input {
 }
 
  
- /* ============================= 
-  Boutons
- ============================= */
- button {
-     background-color: var(--clr-yellow);
-     font-family: var(--ff-luxury);
-     color: white;
-     border: none;
-     padding: 12px 18px;
-     font-size: 18px;
-     font-weight: bold;
-     border-radius: 25px;
-     cursor: pointer;
-     transition: all 0.3s ease-in-out;
-     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
- }
+/* ============================= 
+ Boutons
+============================= */
+button {
+    background-color: var(--clr-yellow);
+    font-family: var(--ff-luxury);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
  
- button:hover {
-     background-color: var(--clr-blue);
-     transform: scale(1.05);
-     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
- }
+button:hover {
+    background-color: var(--clr-blue);
+    transform: scale(1.05);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+}
  
- /* Espacement des boutons dans .container */
- .container a {
-     display: inline-block;
-     margin: 10px;
- }
+/* Espacement des boutons dans .container */
+.container a {
+    display: inline-block;
+    margin: 10px;
+}
+
+/* ============================= 
+ Formulaires (Login & Inscription)
+============================= */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input {
+    font-family: var(--ff-luxury);
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
  
- /* ============================= 
-  Formulaires (Login & Inscription)
- ============================= */
- form {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
- }
+/* Messages d'erreur */
+.error {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
  
- input {
-     font-family: var(--ff-luxury);
-     width: 100%;
-     padding: 10px;
-     margin: 8px 0;
-     border: 1px solid #ccc;
-     border-radius: 5px;
-     font-size: 16px;
- }
+/* ============================= 
+ Titres & Texte
+============================= */
+h1, h2 {
+    font-family: var(--ff-luxury);
+    color: black;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sous-titres */
+p {
+    font-size: 1.3rem;
+    color: #333;
+}
  
- /* Messages d'erreur */
- .error {
-     color: red;
-     font-weight: bold;
-     margin-bottom: 10px;
- }
+/* ============================= 
+Liens 
+============================= */
+a {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: var(--clr-yellow);
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
  
- /* ============================= 
-  Titres & Texte
- ============================= */
- h1, h2 {
-     font-family: var(--ff-luxury);
-     color: black;
-     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-     font-size: 2.5rem;
-     font-weight: 400;
-     letter-spacing: 1px;
-     text-rendering: optimizeLegibility;
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
- }
- 
- /* Sous-titres */
- p {
-     font-size: 1.3rem;
-     color: #333;
- }
- 
- /* ============================= 
-  Liens 
- ============================= */
- a {
-     text-decoration: none;
-     color: var(--clr-darkgreen);
-     font-weight: bold;
-     transition: color 0.3s ease-in-out;
- }
- 
- a:hover {
-     color: var(--clr-yellow);
+a:hover {
+     color: var(--clr-dark_teal);
      text-decoration: underline;
- }
+}
  
 
 /* ============================= 
@@ -299,7 +301,7 @@ input {
    Cartes d'options (Boutons) 
 ============================= */
 .dashboard-card {
-    width: 350px;
+    width: 370px;
     height: 250px;
     text-align: center;
     padding: 20px;
@@ -339,11 +341,14 @@ input {
 }
 
 .dashboard-card h3 {
-    font-family: 'Poppins', sans-serif; /* Change to your preferred font */
+    font-family: 'Poppins', sans-serif;
     font-size: 1.5rem;  
     font-weight: bold;   
     color: white;        
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional shadow for better contrast */
+    text-shadow: 4px 4px 14px rgba(0, 0, 0, 1);
+    background-color: rgba(0, 0, 0, 0.6); 
+    padding: 10px;
+    border-radius: 8px;
 }
 
 
@@ -388,18 +393,6 @@ td {
 
 tr:hover {
     background-color: rgba(144, 228, 193, 0.3);
-}
-
-a {
-    display: block;
-    margin-top: 20px;
-    text-decoration: none;
-    color: var(--clr-dark_teal);
-    font-weight: bold;
-}
-
-a:hover {
-    text-decoration: underline;
 }
 
 .scroll-table {

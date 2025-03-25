@@ -96,6 +96,7 @@ $reservations = pg_fetch_all($result);
                     <th>État</th>
                     <th>Paiement</th>
                     <th>Info</th>
+                    <th>Annuler</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,6 +125,16 @@ $reservations = pg_fetch_all($result);
                             </td>
                             <td>
                                 <button onclick='showInfo(<?= json_encode($r) ?>)'>Info</button>
+                            </td>
+                            <td>
+                                <?php if ($r['etat'] !== 'annule'): ?>
+                                    <form method="POST" action="annuler_reservation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                        <input type="hidden" name="reservation_id" value="<?= $r['reservation_id'] ?>">
+                                        <button type="submit">Annuler</button>
+                                    </form>
+                                <?php else: ?>
+                                    ❌
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
