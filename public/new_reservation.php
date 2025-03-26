@@ -188,6 +188,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="container-register">
+        <div class="link-buttons">
+            <a href="vue_chambres_zone.php" class="vue-lien">Voir les chambres par zone</a>
+            <span class="vue-separateur"> | </span>
+            <a href="vue_capacite_hotel.php" class="vue-lien">Voir la capacité par hôtel</a>
+        </div>
+
         <h3>Faire une Nouvelle Réservation</h3>
 
         <?php if (!empty($error)): ?>

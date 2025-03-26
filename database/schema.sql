@@ -197,3 +197,37 @@ CREATE INDEX idx_employe_position ON employe (position);
 
 -- Accélère l'affichage des réservations pour un client donné
 CREATE INDEX idx_reservation_client ON reservation (client_NAS, date_debut);
+
+
+
+
+-- Ajout des deux vues spécifiques
+
+-- Vue de chambres disponibles par zone
+CREATE OR REPLACE VIEW chambres_disponibles_par_zone AS
+SELECT 
+    h.adresse AS zone,
+    COUNT(*) AS chambres_disponibles
+FROM chambre c
+JOIN hotel h ON c.hotel_id = h.hotel_id
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM associe a
+    JOIN reservation r ON a.reservation_id = r.reservation_id
+    WHERE a.chambre_id = c.chambre_id
+    AND r.etat IN ('en_attente', 'confirme', 'enregistre')
+    AND daterange(r.date_debut, r.date_fin, '[]') && daterange(CURRENT_DATE, CURRENT_DATE, '[]')
+)
+GROUP BY h.adresse
+ORDER BY h.adresse;
+
+-- Vue de capacité de chambres d'un hotel spécifique
+CREATE OR REPLACE VIEW capacite_chambres_par_hotel AS
+SELECT 
+    h.hotel_id,
+    h.nom AS nom_hotel,
+    c.chambre_id,
+    c.capacite
+FROM chambre c
+JOIN hotel h ON c.hotel_id = h.hotel_id
+ORDER BY h.nom, c.chambre_id;

@@ -177,7 +177,7 @@ a {
 }
  
 a:hover {
-     color: var(--clr-dark_teal);
+     color: var(--clr-darkgreen);
      text-decoration: underline;
 }
  
@@ -296,6 +296,31 @@ a:hover {
     gap: 50px;
     flex-wrap: wrap;
 }
+
+.link-buttons {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.vue-separateur {
+    margin: 0 10px;
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.vue-lien {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.vue-lien:hover {
+    color: var(--clr-darkgreen);
+    text-decoration: underline;
+}
+
 
 /* ============================= 
    Cartes d'options (Boutons) 
