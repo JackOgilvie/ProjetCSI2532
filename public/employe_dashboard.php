@@ -1,83 +1,76 @@
 <?php
 session_start();
-include '../config/config.php'; // Database connection
+include '../config/config.php';
 
-// Redirect to login if not authenticated
-if (!isset($_SESSION['email'])) {
+// Rediriger si l’utilisateur n’est pas connecté ou pas employé
+if (!isset($_SESSION['email']) || $_SESSION['type'] !== 'employe') {
     header("Location: login.php");
     exit();
 }
 
-// Check if the user is a client or employee
-$user_type = $_SESSION['type'];
-$user_email = $_SESSION['email'];
+// Récupérer les infos de l'employé connecté
+$email = $_SESSION['email'];
+$res_emp = pg_query_params($conn, "SELECT employe_id, hotel_id FROM employe WHERE email = $1", [$email]);
+$emp = pg_fetch_assoc($res_emp);
+$hotel_id = $emp['hotel_id'];
 
-// SQL query to fetch reservations
-if ($user_type === 'client') {
-    // Clients can only see their own reservations
-    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
-            FROM reservation r
-            JOIN associe a ON r.reservation_id = a.reservation_id
-            JOIN chambre c ON a.chambre_id = c.chambre_id
-            JOIN hotel h ON c.hotel_id = h.hotel_id
-            JOIN client cl ON r.client_nas = cl.nas
-            WHERE cl.email = $1";
-    $params = array($user_email);
-} else {
-    // Employees can see all reservations
-    $sql = "SELECT r.reservation_id, r.date_debut, r.date_fin, r.etat, r.paiement, h.nom AS hotel_nom 
-            FROM reservation r
-            JOIN associe a ON r.reservation_id = a.reservation_id
-            JOIN chambre c ON a.chambre_id = c.chambre_id
-            JOIN hotel h ON c.hotel_id = h.hotel_id";
-    $params = array();
-}
+$error = "";
+$success = "";
 
-$result = pg_query_params($conn, $sql, $params);
+// Info sur la chaine et l'hotel
+$sql_info_hotel = "
+    SELECT h.nom AS nom_hotel, c.nom AS nom_chaine
+    FROM hotel h
+    JOIN chaine c ON h.chaine_id = c.chaine_id
+    WHERE h.hotel_id = $1
+";
+$res_info = pg_query_params($conn, $sql_info_hotel, [$hotel_id]);
+$info = pg_fetch_assoc($res_info);
+
+$nom_hotel = $info['nom_hotel'];
+$nom_chaine = $info['nom_chaine'];
+
+$email = $_SESSION['email'];
+$sql_employe = "SELECT nom, prenom FROM employe WHERE email = $1";
+$res = pg_query_params($conn, $sql_employe, [$email]);
+$employe = pg_fetch_assoc($res);
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Réservations - eHôtels</title>
+    <title>Tableau de bord - Employé</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Mes Réservations</h2>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="images/logo.png" alt="eHotels Logo" class="logo">
+            <h2>eHôtels</h2>
+        </div>
+        <div class="navbar-right">
+            <span>Bonjour, <?= htmlspecialchars($employe['prenom']) ?> !</span>
+            <a href="logout.php" class="logout-button">Déconnexion</a>
+        </div>
+    </nav>
 
-        <?php if (pg_num_rows($result) > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID Réservation</th>
-                        <th>Hôtel</th>
-                        <th>Date de Début</th>
-                        <th>Date de Fin</th>
-                        <th>État</th>
-                        <th>Paiement ($)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = pg_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['reservation_id']); ?></td>
-                            <td><?php echo htmlspecialchars($row['hotel_nom']); ?></td>
-                            <td><?php echo htmlspecialchars($row['date_debut']); ?></td>
-                            <td><?php echo htmlspecialchars($row['date_fin']); ?></td>
-                            <td><?php echo htmlspecialchars($row['etat']); ?></td>
-                            <td><?php echo htmlspecialchars($row['paiement']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>Aucune réservation trouvée.</p>
-        <?php endif; ?>
+    <div class="dashboard-container">
+        <div class="dashboard-content-box">
+            <h2><?= htmlspecialchars($nom_hotel) ?> (<?= htmlspecialchars($nom_chaine) ?>)</h2>
+            <h3>Gérez les réservations des clients facilement!</h3>
 
-        <a href="client_dashboard.php">Retour au tableau de bord</a>
+
+            <div class="dashboard-options">
+                <a href="employe_reservations.php" class="dashboard-card">
+                    <h3>Voir les réservations</h3>
+                </a>
+
+                <a href="creer_location.php" class="dashboard-card">
+                    <h3>Créer une location immédiate</h3>
+                </a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
