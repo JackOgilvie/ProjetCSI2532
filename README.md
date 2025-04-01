@@ -45,7 +45,20 @@ php -S localhost:8000
 http://localhost:8000/
 ```
 
+## Informations sur l'application
 
+Il existe deux types d'utilisateurs sur le site : **Client** et **Employé**.
+
+### 🔹 Accès au site Client
+- Créez un nouveau compte via le formulaire d’inscription.
+- Connectez-vous avec ce compte pour effectuer des réservations.
+
+### 🔹 Accès au site Employé
+- Utilisez les identifiants suivants :
+  - **Courriel :** jlavoie@ehotels.com  
+  - **Mot de passe :** Manager123
+- Il s'agit d'un compte employé général pour accéder à toutes les fonctionnalités liées à la gestion des réservations.
+- Ce compte permet de voir et modifier toutes les réservations de la compagnie eHôtels.
 
 ## Auteurs
 - Jack Ogilvie #300351466
