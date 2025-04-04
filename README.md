@@ -12,9 +12,9 @@ Avant de commencer, assurez-vous d'avoir les logiciels suivants installés :
 
 ## Installation du Projet
 
-**1. Cloner le dépôt GitHub**
+**1. Obtenir les fichiers**
 
-Cloner le dépôt depuis ce répo GitHub.
+Soit télécharger les fichiers du .zip ou sinon cloner le dépôt depuis le répo GitHub.
 
 **2. Créer la base de données dans PostgreSQL**
 
