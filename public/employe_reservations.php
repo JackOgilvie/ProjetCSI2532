@@ -61,7 +61,7 @@ $reservations = pg_fetch_all($result);
 </head>
 <body>
 <div class="container-register">
-    <h2>📋 Réservations des Clients</h2>
+    <h3>📋 Réservations des Clients</h3>
     
     <?php if (isset($_SESSION['reservation_error'])): ?>
         <p style="color:red; font-weight:bold;">

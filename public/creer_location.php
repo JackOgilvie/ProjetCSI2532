@@ -33,7 +33,10 @@ $date_debut = $_GET['date_debut'] ?? '';
 $date_fin = $_GET['date_fin'] ?? '';
 $chambres = [];
 
-if ($date_debut && $date_fin && $date_debut < $date_fin) {
+if ($date_debut && $date_fin) {
+    if ($date_debut >= $date_fin) {
+        $error = "❌ La date de fin doit être après la date de début.";
+    } else {
     // Récupérer les chambres disponibles à l’hôtel de l’employé
     $sql_chambres = "
         SELECT c.*
@@ -51,6 +54,7 @@ if ($date_debut && $date_fin && $date_debut < $date_fin) {
     ";
     $res_chambres = pg_query_params($conn, $sql_chambres, [$hotel_id, $date_debut, $date_fin]);
     $chambres = pg_fetch_all($res_chambres);
+    }
 }
 
 // Créer réservation immédiate

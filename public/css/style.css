@@ -11,6 +11,7 @@
     --clr-darkblue: #2b23d4;
     --clr-red: #ff000c;
     --clr-lime: #d1ff00;
+    --clr-coral: #FF5E5B;
  
     --ff-title: 'Merienda';
     --ff-content: 'Courier New', monospace;
@@ -171,13 +172,13 @@ a {
     display: block;
     margin-top: 20px;
     text-decoration: none;
-    color: var(--clr-yellow);
+    color: var(--clr-darkgreen);
     font-weight: bold;
     transition: color 0.3s ease-in-out;
 }
  
 a:hover {
-     color: var(--clr-darkgreen);
+     color: var(--clr-coral);
      text-decoration: underline;
 }
  

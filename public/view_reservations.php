@@ -85,7 +85,7 @@ $reservations = pg_fetch_all($result);
 </head>
 <body>
     <div class="container-register">
-        <h2>Mes Réservations</h2>
+        <h3>Mes Réservations</h3>
         <table>
             <thead>
                 <tr>
